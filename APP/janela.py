@@ -1,4 +1,3 @@
-from dataclasses import replace
 from conexao import Dados
 from conexao import Login
 from tkinter import *
@@ -6,6 +5,9 @@ from tkinter import ttk
 from tkinter import filedialog as fd
 from tkinter import messagebox as showinfo
 from logs import Log
+
+banco_dados = "dados"
+banco_celula ="celula"
 
 fotos = {'fundo':"grafica\\fundo.png",
         'fundo_login':"grafica\\login.png",
@@ -36,7 +38,7 @@ class Janela():
             self.ftela()
             self.conexao = Dados()
             self.log.debug('Programa rodando')
-            # self.ftela_celula()
+            self.ftela_celula()
         except:
             self.log.error('PROGRAMA SEM RODAR NA FUNÇÃO JANELA')
         pass
@@ -178,9 +180,9 @@ class Janela():
                                 res_tel = tel
                             if celula == '':
                                 celula ='1'
-                                self.salvar_into(nome,celula,email,res_tel,data,ins_id)
+                                self.salvar_into(nome,celula,email,res_tel,data,ins_id, banco_dados)
                             else:
-                                self.salvar_into(nome,celula,email,res_tel,data,ins_id)
+                                self.salvar_into(nome,celula,email,res_tel,data,ins_id, banco_dados)
                         else:
                             showinfo.showerror(title='AVISO', message= 'ERRO!!\nNÚMERO INVÁLIDO\nEXEMPLO: DDD + NUMERO\n71986481515 ou (71) 98648-1515')
                     else:
@@ -190,17 +192,29 @@ class Janela():
         else:
             pass
 
-    def salvar_into(self,nome,celula,email,res_tel,data,ins_id):
-        run = self.conexao.inserir(nome,celula,email,res_tel,data,ins_id)
-        if run ==True:
-            showinfo.showinfo(title='AVISO', message= 'DADOS SALVO')
-            self.limpar()
-            self.texto_id()
-            self.select(delete=True,ver=True)
-            self.root.update()
-        else:
-            showinfo.showerror(title='AVISO', message= 'ERRO!!\n VERIFIQUE AS ENTRADAS!\n O ID PODE JÁ EXISTIR!')
-            self.root.update()
+    def salvar_into(self,nome =None,celula=None,email=None,telefone=None,data=None,id=None,tabela=None,obeservacao=None,endereco=None,lider=None):
+        if tabela =="dados":
+            run = self.conexao.inserir(nome = nome,celula =celula,email =email,telefone= telefone,data=data,id=id, tabela= tabela)
+            if run ==True:
+                showinfo.showinfo(title='AVISO', message= 'DADOS SALVO')
+                self.limpar()
+                self.texto_id()
+                self.select(delete=True,ver=True)
+                self.root.update()
+            else:
+                showinfo.showerror(title='AVISO', message= 'ERRO!!\n VERIFIQUE AS ENTRADAS!\n O ID PODE JÁ EXISTIR!')
+                self.root.update()
+        elif tabela =="celula":
+            run = self.conexao.inserir(nome = nome,lider =lider,observacao=obeservacao,endereco=endereco,id=id, tabela= tabela)
+            if run ==True:
+                showinfo.showinfo(title='AVISO', message= 'DADOS SALVO')
+                self.limpar()
+                self.texto_id()
+                self.select(delete=True,ver=True)
+                self.root.update()
+            else:
+                showinfo.showerror(title='AVISO', message= 'ERRO!!\n VERIFIQUE AS ENTRADAS!\n O ID PODE JÁ EXISTIR!')
+                self.root.update()
 
     def texto_id(self, tela='PRINCIPAL'):
         self.conexao = Dados()
@@ -515,7 +529,11 @@ class Janela():
         self.observacao_celula = Text(self.tela_celula,bd=1, font=("calibre", 10))
         self.observacao_celula.place(width=262, height=120, x= 21, y=290)
         resultado = self.conexao.ver('nome','dados','order by nome')
-        self.lider_celula= ttk.Combobox(self.tela_celula, values=resultado, justify=LEFT, background='white', foreground='black',replace= ('_', ' '))
+        resultadotratado = []
+        for c in resultado:
+            c = str(c)
+            resultadotratado.append(c.replace("_", " ").replace("(", "").replace(")", "").replace(",", "").replace("'", ""))
+        self.lider_celula= ttk.Combobox(self.tela_celula, values=resultadotratado, justify=LEFT, background='white', foreground='black')
         self.lider_celula.place(width=260, height=28, x= 21, y=218)
     def values_ent_celula(self):
         self.values_nome_celula = self.nome_celula.get().upper()
@@ -530,7 +548,7 @@ class Janela():
         return self.values_nome_celula,self.values_lider_celula,self.values_observacao_celula, self.values_endereco_celula
     def salvar_celula(self):
         nome,lider,observacao,endereco = self.values_ent_celula()
-        print(lider)
+        
 
     def barrademenu(self):
         self.barramenu =Menu(self.root)
