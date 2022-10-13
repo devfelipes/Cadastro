@@ -439,14 +439,14 @@ class Janela():
         tela_senha = str(self.senha.get())
         x=0
         for c in usuario :
-            xusuario = str(usuario[x]).replace('(', '').replace(')', '').replace(',','').replace("'", "")
+            xusuario = str(c).replace('(', '').replace(')', '').replace(',','').replace("'", "")
             xsenha = str(senha[x]).replace('(', '').replace(')', '').replace(',','').replace("'", "")
-            x+=1
-            if xusuario in tela_usuario and xsenha in tela_senha:
+            if xusuario == tela_usuario and xsenha == tela_senha:
                 self.conectar(True)
                 v =True
                 break
             else:
+                x+=1
                 v = False
         if v ==False:
             showinfo.showerror(title='ERRO', message= 'Usuário ou Senha inválida!\nTente novamente')
