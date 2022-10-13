@@ -18,12 +18,12 @@ class Dados:
                 return False
         elif tabela =="celula":
             try:    
-                self.cursor.execute(f"INSERT INTO {tabela} (id,nome,celula,email,telefone,nascimento) VALUES ('{int(id)}','{nome}', '{celula}','{email}','{telefone}' ,'{data}')")
+                self.cursor.execute(f"INSERT INTO {tabela} (id,nome,lider,endereco,observacao) VALUES ('{id}','{nome}', '{lider}','{endereco}' ,'{observacao}')")
                 self.banco.commit()
-                self.log_dados.info(f"COMANDO = INSERT INTO {tabela} (id,nome,celula,email,telefone,nascimento) VALUES ('{int(id)}','{nome}', '{celula}','{email}','{telefone}' ,'{data}')")
+                self.log_dados.info(f"COMANDO = INSERT INTO {tabela} (id,nome,lider,endereco,observacao) VALUES ('{id}','{nome}', '{lider}','{endereco}' ,'{observacao}')")
                 return True
             except:
-                self.log_dados.error(f"ID JÁ EXISTE = INSERT INTO {tabela} (id,nome,celula,email,telefone,nascimento) VALUES ('{int(id)}','{nome}', '{celula}','{email}','{telefone}' ,'{data}')")
+                self.log_dados.error(f"ID JÁ EXISTE = INSERT INTO {tabela} (id,nome,lider,endereco,observacao) VALUES ('{id}','{nome}', '{lider}','{endereco}' ,'{observacao}')")
                 return False
     def ver (self,variavel, tabela,ac):
         self.cursor.execute(f"SELECT {variavel} FROM {tabela} {ac}")

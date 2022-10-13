@@ -213,7 +213,7 @@ class Janela():
                 self.select(delete=True,ver=True)
                 self.root.update()
             else:
-                showinfo.showerror(title='AVISO', message= 'ERRO!!\n VERIFIQUE AS ENTRADAS!\n O ID PODE JÁ EXISTIR!')
+                showinfo.showerror(title='AVISO', message= 'ERRO!!\n VERIFIQUE AS ENTRADAS!\n O ID OU NOME, PODE JÁ EXISTIR!')
                 self.root.update()
 
     def texto_id(self, tela='PRINCIPAL'):
@@ -548,7 +548,10 @@ class Janela():
         return self.values_nome_celula,self.values_lider_celula,self.values_observacao_celula, self.values_endereco_celula
     def salvar_celula(self):
         nome,lider,observacao,endereco = self.values_ent_celula()
-        
+        if nome in '' and lider in '' or nome in '' or lider in '':
+            showinfo.showerror(title='AVISO', message= 'ERRO!!\n NOME E LIDER SÃO OBRIGATÓRIO')
+        else:
+            self.salvar_into(id =self.ver_id ,nome=nome,lider=lider,obeservacao=observacao,endereco=endereco,tabela=banco_celula)
 
     def barrademenu(self):
         self.barramenu =Menu(self.root)
