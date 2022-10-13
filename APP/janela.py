@@ -94,7 +94,11 @@ class Janela():
         self.nome =Entry(self.root, bd=1, font=("calibre", 10), background='white', justify=LEFT, foreground='black')
         self.nome.place(width=456, height=31, x= 144, y=177)
         resultado = self.conexao.ver('nome','celula','order by nome')
-        self.celula= ttk.Combobox(self.root, values=resultado, justify=LEFT, background='white', foreground='black')
+        resultadotratado = []
+        for c in resultado:
+            c = str(c)
+            resultadotratado.append(c.replace("_", " ").replace("(", "").replace(")", "").replace(",", "").replace("'", ""))
+        self.celula= ttk.Combobox(self.root, values=resultadotratado, justify=LEFT, background='white', foreground='black')
         self.celula.place(width=233, height=31, x= 600, y=275)
         self.email =Entry(self.root,bd=1, font=("calibre", 10), background='white', justify=LEFT, foreground='black')
         self.email.place(width=325, height=31, x= 144, y=226)
@@ -558,6 +562,7 @@ class Janela():
             showinfo.showerror(title='AVISO', message= 'ERRO!!\n NOME E LIDER SÃO OBRIGATÓRIO')
         else:
             self.salvar_into(id =self.ver_id ,nome=nome,lider=lider,obeservacao=observacao,endereco=endereco,tabela=banco_celula)
+            
 
     def barrademenu(self):
         self.barramenu =Menu(self.root)
