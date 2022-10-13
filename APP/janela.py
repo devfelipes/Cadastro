@@ -1,3 +1,4 @@
+from typing import List
 from conexao import Dados
 from conexao import Login
 from tkinter import *
@@ -435,16 +436,22 @@ class Janela():
     def verificador(self):
         conexao = Login()
         usuario,senha = conexao.entrar()
-        usuario = str(usuario[0]).replace('(', '').replace(')', '').replace(',','').replace("'", "")
-        senha = str(senha[0]).replace('(', '').replace(')', '').replace(',','').replace("'", "")
         tela_usuario = str(self.usuario.get())
         tela_senha = str(self.senha.get())
-        if usuario in tela_usuario and senha in tela_senha:
-            self.conectar(True)
-        else:
+        x=0
+        for c in usuario :
+            xusuario = str(usuario[x]).replace('(', '').replace(')', '').replace(',','').replace("'", "")
+            xsenha = str(senha[x]).replace('(', '').replace(')', '').replace(',','').replace("'", "")
+            x+=1
+            if xusuario in tela_usuario and xsenha in tela_senha:
+                self.conectar(True)
+                v =True
+                break
+            else:
+                v = False
+        if v ==False:
             showinfo.showerror(title='ERRO', message= 'Usuário ou Senha inválida!\nTente novamente')
             self.login()
-
     def conectar(self, conexao=False):
         if conexao ==True:
             self.tela_login.destroy()

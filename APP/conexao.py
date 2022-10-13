@@ -50,9 +50,9 @@ class Login:
         self.banco = sqlite3.connect('banco de dados\\dados.db')
         self.cursor = self.banco.cursor()
     def entrar(self):
-        usuario = self.cursor.execute(f"SELECT usuario FROM login")
+        usuario = self.cursor.execute(f"SELECT usuario FROM login ORDER BY id")
         usuario =usuario.fetchall()
-        senha = self.cursor.execute(f"SELECT senha FROM login")
+        senha = self.cursor.execute(f"SELECT senha FROM login ORDER BY id")
         senha = senha.fetchall()
         return usuario, senha
     def inserir(self, usuario,senha):
@@ -62,4 +62,6 @@ class Login:
             return True
         except:
             return False
-    pass
+    def ver (self,variavel, tabela,ac):
+        self.cursor.execute(f"SELECT {variavel} FROM {tabela} {ac}")
+        return self.cursor.fetchall()
