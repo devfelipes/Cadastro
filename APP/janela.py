@@ -39,7 +39,6 @@ class Janela():
             self.ftela()
             self.conexao = Dados()
             self.log.debug('Programa rodando')
-            self.ftela_celula()
         except:
             self.log.error('PROGRAMA SEM RODAR NA FUNÇÃO JANELA')
         pass
