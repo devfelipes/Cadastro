@@ -1,4 +1,3 @@
-from typing import List
 from conexao import Dados
 from conexao import Login
 from tkinter import *
