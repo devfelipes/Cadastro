@@ -1,13 +1,10 @@
-from conexao import Dados
-from conexao import Login
+from conexao import Dados , Login, banco_celula,banco_dados
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog as fd
 from tkinter import messagebox as showinfo
 from logs import Log
 
-banco_dados = "dados"
-banco_celula ="celula"
 
 fotos = {'fundo':"grafica\\fundo.png",
         'fundo_login':"grafica\\login.png",
@@ -36,7 +33,6 @@ class Janela():
             self.root.resizable(width=1, height=1)
             self.sairtela = None
             self.ftela()
-            self.conexao = Dados()
             self.log.debug('Programa rodando')
         except:
             self.log.error('PROGRAMA SEM RODAR NA FUNÇÃO JANELA')
@@ -61,6 +57,7 @@ class Janela():
     def ftela(self):
         try:
             Label(self.root, image=self.fundo).pack()
+            self.conexao = Dados()
             self.texto_id()
             self.botao()
             self.entrada()
@@ -196,7 +193,7 @@ class Janela():
             pass
 
     def salvar_into(self,nome =None,celula=None,email=None,telefone=None,data=None,id=None,tabela=None,obeservacao=None,endereco=None,lider=None):
-        if tabela =="dados":
+        if tabela ==banco_dados:
             run = self.conexao.inserir(nome = nome,celula =celula,email =email,telefone= telefone,data=data,id=id, tabela= tabela)
             if run ==True:
                 showinfo.showinfo(title='AVISO', message= 'DADOS SALVO')
@@ -207,7 +204,7 @@ class Janela():
             else:
                 showinfo.showerror(title='AVISO', message= 'ERRO!!\n VERIFIQUE AS ENTRADAS!\n O ID PODE JÁ EXISTIR!')
                 self.root.update()
-        elif tabela =="celula":
+        elif tabela ==banco_celula:
             run = self.conexao.inserir(nome = nome,lider =lider,observacao=obeservacao,endereco=endereco,id=id, tabela= tabela)
             if run ==True:
                 showinfo.showinfo(title='AVISO', message= 'DADOS SALVO')
@@ -220,9 +217,8 @@ class Janela():
                 self.root.update()
 
     def texto_id(self, tela='PRINCIPAL'):
-        self.conexao = Dados()
         if tela=='PRINCIPAL':
-            self.ver_id = self.conexao.ver('max(id)','dados', '')
+            self.ver_id = self.conexao.ver('max(id)',banco_dados, '')
             self.ver_id = str(self.ver_id[0]).replace(',','').replace('(','').replace(')','')
             if self.ver_id =='None':
                 self.txt_id = Label(self.root, text=f'PROX ID:1', font=('calibre', 15), background='#FFFEA9', foreground='black')
@@ -233,7 +229,7 @@ class Janela():
                 self.txt_id.place(width=135, height=30, x=730, y=175)
             pass
         elif tela =='CELULA':
-            self.ver_id = self.conexao.ver('max(id)','celula', '')
+            self.ver_id = self.conexao.ver('max(id)',banco_celula, '')
             self.ver_id = str(self.ver_id[0]).replace(',','').replace('(','').replace(')','')
             if self.ver_id =='None':
                 self.txt_id = Label(self.tela_celula, text=f'PROX ID:1', font=('calibre', 10), background='white', foreground='#8F4E2C')
@@ -269,7 +265,7 @@ class Janela():
     def limpar_lista(self):
         self.resultado.delete(*self.resultado.get_children())
 
-    def select(self, delete=False, ver=False, order='d.id', banco='dados as d left outer join celula as c on c.id = d.celula', var='d.id,d.nome,c.nome,d.nascimento,d.telefone,d.email'):
+    def select(self, delete=False, ver=False, order='d.id', banco=banco_dados+' as d left outer join celula as c on c.id = d.celula', var='d.id,d.nome,c.nome,d.nascimento,d.telefone,d.email'):
         try:
             if delete==True:
                 self.limpar_lista()
@@ -287,32 +283,32 @@ class Janela():
     def buscar(self):
         id,nome,celula,data,email,telefone= self.values_entrada()
         if telefone != '':
-            dados = self.conexao.ver('d.id,d.nome,c.nome,d.nascimento,d.telefone,d.email','dados as d left outer join celula as c on c.id = d.celula',f"where d.telefone like '{telefone}%' order by d.telefone")
+            dados = self.conexao.ver('d.id,d.nome,c.nome,d.nascimento,d.telefone,d.email',banco_dados+' as d left outer join celula as c on c.id = d.celula',f"where d.telefone like '{telefone}%' order by d.telefone")
             self.limpar_lista()
             for x in dados:
                 self.resultado.insert('',END, values=x )
         if email != '':
-            dados = self.conexao.ver('d.id,d.nome,c.nome,d.nascimento,d.telefone,d.email','dados as d left outer join celula as c on c.id = d.celula',f"where d.email like '{email}%' order by d.email")
+            dados = self.conexao.ver('d.id,d.nome,c.nome,d.nascimento,d.telefone,d.email',banco_dados+' as d left outer join celula as c on c.id = d.celula',f"where d.email like '{email}%' order by d.email")
             self.limpar_lista()
             for x in dados:
                 self.resultado.insert('',END, values=x )
         if celula != '':
-            dados = self.conexao.ver('d.id,d.nome,c.nome,d.nascimento,d.telefone,d.email','dados as d left outer join celula as c on c.id = d.celula',f"where d.celula like '{celula}%' order by d.celula")
+            dados = self.conexao.ver('d.id,d.nome,c.nome,d.nascimento,d.telefone,d.email',banco_dados+'as d left outer join celula as c on c.id = d.celula',f"where d.celula like '{celula}%' order by d.celula")
             self.limpar_lista()
             for x in dados:
                 self.resultado.insert('',END, values=x )
         if data != '':
-            dados = self.conexao.ver('d.id,d.nome,c.nome,d.nascimento,d.telefone,d.email','dados as d left outer join celula as c on c.id = d.celula',f"where d.data like '{data}%' order by d.nascimento")
+            dados = self.conexao.ver('d.id,d.nome,c.nome,d.nascimento,d.telefone,d.email',banco_dados+' as d left outer join celula as c on c.id = d.celula',f"where d.data like '{data}%' order by d.nascimento")
             self.limpar_lista()
             for x in dados:
                 self.resultado.insert('',END, values=x )
         if nome != '':
-            dados = self.conexao.ver('d.id,d.nome,c.nome,d.nascimento,d.telefone,d.email','dados as d left outer join celula as c on c.id = d.celula',f"where d.nome like '{nome}%' order by d.nome")
+            dados = self.conexao.ver('d.id,d.nome,c.nome,d.nascimento,d.telefone,d.email',banco_dados+' as d left outer join celula as c on c.id = d.celula',f"where d.nome like '{nome}%' order by d.nome")
             self.limpar_lista()
             for x in dados:
                 self.resultado.insert('',END, values=x )
         if id != '':
-            dados = self.conexao.ver('d.id,d.nome,c.nome,d.nascimento,d.telefone,d.email','dados as d left outer join celula as c on c.id = d.celula',f'where d.id ={id} order by d.id')
+            dados = self.conexao.ver('d.id,d.nome,c.nome,d.nascimento,d.telefone,d.email',banco_dados+' as d left outer join celula as c on c.id = d.celula',f'where d.id ={id} order by d.id')
             self.limpar_lista()
             for x in dados:
                 self.resultado.insert('',END, values=x )
@@ -515,7 +511,7 @@ class Janela():
         conexao = self.conexao.ver('id','celula',f'where nome="{nome}"')
         return conexao
     def resultado_combox_celula(self,nome):
-        conexao = self.conexao.ver('id','dados',f'where nome="{nome}"')
+        conexao = self.conexao.ver('id',banco_dados,f'where nome="{nome}"')
         return conexao
     def ftela_celula(self):
         self.tela_celula = Toplevel()
@@ -537,7 +533,7 @@ class Janela():
         self.endereco_celula.place(width=260, height=28, x= 21, y=151)
         self.observacao_celula = Text(self.tela_celula,bd=1, font=("calibre", 10))
         self.observacao_celula.place(width=262, height=120, x= 21, y=290)
-        resultado = self.conexao.ver('nome','dados','order by nome')
+        resultado = self.conexao.ver('nome',banco_dados,'order by nome')
         resultadotratado = []
         for c in resultado:
             c = str(c)
